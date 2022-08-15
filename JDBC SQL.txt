@@ -1,0 +1,129 @@
+Exercise
+
+1.
+
+INSERT INTO PRODUCT VALUES(?,?,?,?,?)
+
+public boolean addProduct(int productCode, String productName, double unitPrice, int quantity, String category) {
+		
+		boolean insertStatus = false;
+		
+		try {
+			Connection con = ConnectionUtil.getConnection();
+			
+			if(con != null) {
+				
+					PreparedStatement pstmt = con.prepareStatement("INSERT INTO PRODUCT VALUES(?,?,?,?,?)");
+					pstmt.setInt(1, productCode);
+					pstmt.setString(2, productName);
+					pstmt.setDouble(3, unitPrice);
+					pstmt.setInt(4, quantity);
+					pstmt.setString(5, category);
+					int result = pstmt.executeUpdate();
+					if(result == 1) {
+						insertStatus = true;
+						System.out.println("Row added");
+					}
+					else {
+						System.out.println("Query execution failed");
+					}
+					con.close();
+			}
+		}
+		catch (SQLException e) {
+
+			e.printStackTrace();
+			
+		}
+		return insertStatus;
+	}
+
+	
+	public boolean addProduct(Product product) {
+		return addProduct(product.getProductCode(), product.getProductName(), product.getUnitPrice(), product.getQuantity(), product.getCategory());
+	}
+
+2.
+
+SELECT PRODUCTCODE, PRODUCTNAME, UNITPRICE, QUANTITY, CATEGORY FROM PRODUCT WHERE PRODUCTCODE=?
+
+3.
+
+SELECT PRODUCTCODE, PRODUCTNAME, UNITPRICE, QUANTITY, CATEGORY FROM PRODUCT WHERE CATEGORY = ?
+
+4.
+
+UPDATE PRODUCT SET UNITPRICE = ? WHERE PRODUCTCODE = ?
+
+5.
+
+DELETE FROM PRODUCT WHERE PRODUCTCODE = ?
+
+
+Assignment
+
+1.
+
+public boolean bookTicket(int bookingId,int passengerId, String origin, String destination, String departureDate, double amount)
+
+SELECT FLIGHTID FROM FLIGHT WHERE ORIGIN = ? AND DESTINATION = ? AND DEPARTUREDATE = ?
+INSERT INTO BOOKING VALUES(?,?,?,?)
+
+pst.setInt(1, id);
+pst.setInt(2, bookingId);
+pst.setDouble(3, amount);
+pst.setInt(4, passengerId);
+
+2.
+
+public boolean registerPassenger(int passengerId, String passengerName, String city)
+
+INSERT INTO PASSENGER VALUES(?,?,?)
+
+pt.setInt(1, passengerId);
+pt.setString(2, passengerName);
+pt.setString(3, city);
+
+3.
+
+public List<Flight> getFlight(String origin, String destination, String departureDate)
+
+SELECT FLIGHTID, FLIGHTNAME, ORIGIN, DESTINATION, DEPARTUREDATE, ECONOMYCLASSAVAILABLE, BUSINESSCLASSAVAILABLE FROM FLIGHT WHERE ORIGIN = ? AND DESTINATION = ? AND DEPARTUREDATE = ?
+
+Date date = Date.valueOf(departureDate);
+ps.setString(1, origin);
+ps.setString(2, destination);
+ps.setDate(3, date);
+
+4.
+
+public int getEconomySeat(String origin, String destination, String departureDate)
+
+SELECT ECONOMYCLASSAVAILABLE FROM FLIGHT WHERE ORIGIN = ? AND DESTINATION = ? AND DEPARTUREDATE = ?
+
+Date date = Date.valueOf(departureDate);
+ps.setString(1, origin);
+ps.setString(2, destination);
+ps.setDate(3, date);
+
+5.
+
+public List<Passenger> getPassengerList(int flightid)
+
+SELECT PASSENGER.PASSENGERID, PASSENGERNAME, CITY 
+FROM PASSENGER JOIN BOOKING 
+ON BOOKING.PASSENGERID = PASSENGER.PASSENGERID 
+WHERE BOOKING.FLIGHTID = ? 
+ORDER BY PASSENGER.PASSENGERID
+
+7.
+
+public List<City> getCityList()
+
+SELECT CITY, COUNT(*) AS PAS 
+FROM PASSENGER 
+GROUP BY CITY 
+ORDER BY PAS DESC
+
+
+
