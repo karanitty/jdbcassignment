@@ -7,15 +7,15 @@ public class Flight {
 	private String origin;
 	private String destination;
 	private String departureDate;
-	private boolean economyClassAvailable;
-	private boolean businessClassAvailable;
+	private int economyClassAvailable;
+	private int businessClassAvailable;
 	
 	public Flight() {
 		// TODO Auto-generated constructor stub
 	}
 	
 	public Flight(int flightId, String flightName, String origin, String destination, String departureDate,
-			boolean economyClassAvailable, boolean businessClassAvailable) {
+			int economyClassAvailable, int businessClassAvailable) {
 		super();
 		this.flightId = flightId;
 		this.flightName = flightName;
@@ -66,19 +66,19 @@ public class Flight {
 		this.departureDate = departureDate;
 	}
 
-	public boolean isEconomyClassAvailable() {
+	public int isEconomyClassAvailable() {
 		return economyClassAvailable;
 	}
 
-	public void setEconomyClassAvailable(boolean economyClassAvailable) {
+	public void setEconomyClassAvailable(int economyClassAvailable) {
 		this.economyClassAvailable = economyClassAvailable;
 	}
 
-	public boolean isBusinessClassAvailable() {
+	public int isBusinessClassAvailable() {
 		return businessClassAvailable;
 	}
 
-	public void setBusinessClassAvailable(boolean businessClassAvailable) {
+	public void setBusinessClassAvailable(int businessClassAvailable) {
 		this.businessClassAvailable = businessClassAvailable;
 	}
 

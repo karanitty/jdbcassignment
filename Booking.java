@@ -20,7 +20,6 @@ public class Booking {
 	}
 
 
-
 	public int getFlightId() {
 		return flightId;
 	}

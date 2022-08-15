@@ -1,6 +1,7 @@
 package com.ibsplc.jdbc.assignment1;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,9 +22,10 @@ public class FlightReservationDAOImpl implements FlightReservationDAO{
 			if(con!=null) {
 				System.out.println("Connection");
 				PreparedStatement pst = con.prepareStatement("SELECT FLIGHTID FROM FLIGHT WHERE ORIGIN = ? AND DESTINATION = ? AND DEPARTUREDATE = ?");
+				Date date = Date.valueOf(departureDate);
 				pst.setString(1, origin);
 				pst.setString(2, destination);
-				pst.setString(3, departureDate);
+				pst.setDate(3, date);
 				System.out.println("executed");
 				ResultSet rs = pst.executeQuery();
 				System.out.println("executed");
@@ -67,7 +69,6 @@ public class FlightReservationDAOImpl implements FlightReservationDAO{
 			pt.setInt(1, passengerId);
 			pt.setString(2, passengerName);
 			pt.setString(3, city);
-			
 			int result = pt.executeUpdate();
 			if(result == 1) {
 				System.out.println("Passenger added");
@@ -91,15 +92,17 @@ public class FlightReservationDAOImpl implements FlightReservationDAO{
 			Connection con = ConnectionUtil.getConnection();
 			
 			PreparedStatement ps = con.prepareStatement("SELECT FLIGHTID, FLIGHTNAME, ORIGIN, DESTINATION, DEPARTUREDATE, ECONOMYCLASSAVAILABLE, BUSINESSCLASSAVAILABLE FROM FLIGHT WHERE ORIGIN = ? AND DESTINATION = ? AND DEPARTUREDATE = ?");
+			Date date = Date.valueOf(departureDate);
 			ps.setString(1, origin);
 			ps.setString(2, destination);
-			ps.setString(3, departureDate);
+			ps.setDate(3, date);
+			System.out.println("print");
+			
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
-				newFlight = new Flight(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getBoolean(6),rs.getBoolean(7));
+				newFlight = new Flight(rs.getInt(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getInt(6),rs.getInt(7));
 				flightList.add(newFlight);
 			}
-			con.close();
 		}
 		
 		catch(SQLException e) {
@@ -107,6 +110,92 @@ public class FlightReservationDAOImpl implements FlightReservationDAO{
 		}
 		return flightList;
 	}
+
+	@Override
+	public int getEconomySeat(String origin, String destination, String departureDate) {
+		// TODO Auto-generated method stub
+		int seats = 0;
+		try {
+			Connection con = ConnectionUtil.getConnection();
+			
+			PreparedStatement ps = con.prepareStatement("SELECT ECONOMYCLASSAVAILABLE FROM FLIGHT WHERE ORIGIN = ? AND DESTINATION = ? AND DEPARTUREDATE = ?");
+			Date date = Date.valueOf(departureDate);
+			ps.setString(1, origin);
+			ps.setString(2, destination);
+			ps.setDate(3, date);
+			
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				seats = seats+rs.getInt(1);
+			}
+		}
+		catch(SQLException e) {
+			e.getLocalizedMessage();
+		}
+		return seats;
+	}
+
+	@Override
+	public List<Passenger> getPassengerList(int flightid) {
+		List<Passenger> passengerList = new ArrayList<Passenger>();
+		Passenger passenger = null;
+		
+		try {
+			Connection con = ConnectionUtil.getConnection();
+			
+			PreparedStatement ps = con.prepareStatement("SELECT PASSENGER.PASSENGERID, PASSENGERNAME, CITY FROM PASSENGER JOIN BOOKING ON BOOKING.PASSENGERID = PASSENGER.PASSENGERID WHERE BOOKING.FLIGHTID = ? ORDER BY PASSENGER.PASSENGERID");
+			ps.setInt(1, flightid);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				passenger = new Passenger(rs.getInt(1),rs.getString(2),rs.getString(3));
+				passengerList.add(passenger);
+			}
+			con.close();
+		}
+		catch(SQLException e) {
+			e.getStackTrace();
+		}
+		
+		return passengerList;
+	}
+
+	@Override
+	public List<City> getCityList() {
+		List<City> cityList = new ArrayList<City>();
+		
+		City city = null;
+		
+		try {
+			Connection con = ConnectionUtil.getConnection();
+			PreparedStatement ps = con.prepareStatement("SELECT CITY, COUNT(*) AS PAS FROM PASSENGER GROUP BY CITY ORDER BY PAS DESC");
+			
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()) {
+				city = new City(rs.getString(1),rs.getInt(2));
+				cityList.add(city);
+			}
+		}
+		catch(SQLException e) {
+			e.getStackTrace();
+		}
+		return cityList;
+	}
+
+	
+//	public String getFlight(String origin, String destination) {
+//		String flight = null;
+//		
+//		try {
+//			Connection con = ConnectionUtil.getConnection();
+//			
+//			PreparedStatement ps = con.prepareStatement("")
+//		}
+//		catch(SQLException e) {
+//			e.getStackTrace();
+//		}
+//		return null;
+//	}
 	
 	
 
